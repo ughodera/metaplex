@@ -18,6 +18,7 @@ export async function saveAdmin(
   isPublic: boolean,
   whitelistedCreators: WhitelistedCreator[],
 ) {
+  console.log('WhitelistedCreators', whitelistedCreators);
   if (!wallet.publicKey) throw new WalletNotConnectedError();
 
   const signers: Array<Keypair[]> = [];

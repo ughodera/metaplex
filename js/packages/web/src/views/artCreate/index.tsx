@@ -19,6 +19,7 @@ import { ArtCard } from './../../components/ArtCard';
 import { UserSearch, UserValue } from './../../components/UserSearch';
 import { Confetti } from './../../components/Confetti';
 import { mintNFT } from '../../actions';
+import {saveAdmin} from '../../actions/saveAdmin';
 import {
   MAX_METADATA_LEN,
   useConnection,
@@ -26,6 +27,7 @@ import {
   MetadataCategory,
   useConnectionConfig,
   Creator,
+  WhitelistedCreator,
   shortenAddress,
   MetaplexModal,
   MetaplexOverlay,
@@ -92,6 +94,26 @@ export const ArtCreateView = () => {
     },
     [history],
   );
+
+  useEffect(() => {
+    async function customSaveAdmin() {
+      if(wallet.publicKey) {
+        console.log("SaveAdmin before try catch")
+        try {
+          await saveAdmin(connection, wallet, true, [
+            new WhitelistedCreator({
+              address: wallet.publicKey.toBase58(),
+              activated: true,
+            }),
+          ]); 
+          console.log("SaveAdmin success")
+        } catch (error) {
+          console.log("SaveAdmin error", error)
+        }
+      }
+    }
+    customSaveAdmin();
+  }, []),
 
   useEffect(() => {
     if (step_param) setStep(parseInt(step_param));
