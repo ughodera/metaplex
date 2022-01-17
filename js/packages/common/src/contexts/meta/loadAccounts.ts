@@ -104,6 +104,7 @@ export const pullYourMetadata = async (
   userTokenAccounts: TokenAccount[],
   tempCache: MetaState,
 ) => {
+  console.log('pullYourMetadata testing', tempCache);
   const updateTemp = makeSetter(tempCache);
 
   console.log('--------->Pulling metadata for user.');
@@ -1052,7 +1053,6 @@ const pullMetadataByCreators = (
   updater: UpdateStateValueFunc,
 ): Promise<any> => {
   console.log('pulling optimized nfts');
-
   const whitelistedCreators = Object.values(state.whitelistedCreatorsByCreator);
 
   const setter: UpdateStateValueFunc = async (prop, key, value) => {
@@ -1219,6 +1219,7 @@ export const initMetadata = async (
   whitelistedCreators: Record<string, ParsedAccount<WhitelistedCreator>>,
   setter: UpdateStateValueFunc,
 ) => {
+  console.log('Filter initMetadata', metadata);
   if (isMetadataPartOfStore(metadata, whitelistedCreators)) {
     await metadata.info.init();
     setter('metadataByMint', metadata.info.mint, metadata);

@@ -8,7 +8,7 @@ import { ArtworkViewState } from './types';
 import { useItems } from './hooks/useItems';
 import ItemCard from './components/ItemCard';
 import { useUserAccounts } from '@oyster/common';
-import { DownOutlined } from '@ant-design/icons';
+import { ControlOutlined, DownOutlined } from '@ant-design/icons';
 import { isMetadata, isPack } from './utils';
 
 const { TabPane } = Tabs;

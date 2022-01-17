@@ -601,6 +601,7 @@ export class WhitelistedCreator {
   constructor(args: { address: string; activated: boolean }) {
     this.address = args.address;
     this.activated = args.activated;
+    console.log('address activated', this.address, this.activated, this.name);
   }
 }
 

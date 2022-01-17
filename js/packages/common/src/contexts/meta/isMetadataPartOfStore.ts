@@ -10,6 +10,7 @@ export const isMetadataPartOfStore = (
   >,
   store?: ParsedAccount<Store> | null,
 ) => {
+  console.log('Creators ', m.info.data.creators);
   if (!m?.info?.data?.creators) {
     return false;
   }

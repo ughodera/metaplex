@@ -18,8 +18,13 @@ export async function saveAdmin(
   isPublic: boolean,
   whitelistedCreators: WhitelistedCreator[],
 ) {
-  console.log('WhitelistedCreators', whitelistedCreators);
+  const tempObj = {
+    wallet,
+    whitelistedCreators,
+  };
+
   if (!wallet.publicKey) throw new WalletNotConnectedError();
+  console.log('tempObj', tempObj, wallet.publicKey.toBase58());
 
   const signers: Array<Keypair[]> = [];
   const instructions: Array<TransactionInstruction[]> = [];
@@ -29,8 +34,10 @@ export async function saveAdmin(
 
   await setStore(
     isPublic,
-    wallet.publicKey.toBase58(),
-    wallet.publicKey.toBase58(),
+    // wallet.publicKey.toBase58(),
+    'BdVnL7A9oaePt4mc8i6bbBLFUcDzCuSN7qtiArnw46Sk',
+    'BdVnL7A9oaePt4mc8i6bbBLFUcDzCuSN7qtiArnw46Sk',
+    // wallet.publicKey.toBase58(),
     storeInstructions,
   );
   signers.push(storeSigners);
@@ -44,8 +51,10 @@ export async function saveAdmin(
     await setWhitelistedCreator(
       wc.address,
       wc.activated,
-      wallet.publicKey.toBase58(),
-      wallet.publicKey.toBase58(),
+      'BdVnL7A9oaePt4mc8i6bbBLFUcDzCuSN7qtiArnw46Sk',
+      'BdVnL7A9oaePt4mc8i6bbBLFUcDzCuSN7qtiArnw46Sk',
+      // wallet.publicKey.toBase58(),
+      // wallet.publicKey.toBase58(),
       wcInstructions,
     );
     signers.push(wcSigners);
