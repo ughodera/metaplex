@@ -75,8 +75,6 @@ export const AdminView = () => {
     }
   }, [hideAdminPage]);
 
-  console.log('NEXT_PUBLIC_STORE_OWNER_ADDRESS', wallet.publicKey?.toBase58());
-  console.log('NEXT_PUBLIC_STORE_OWNER_ADDRESS', process.env.NEXT_PUBLIC_STORE_OWNER_ADDRESS);
   
   if (hideAdminPage) {
     return <Redirect to="/" />
