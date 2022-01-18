@@ -1219,7 +1219,6 @@ export const initMetadata = async (
   whitelistedCreators: Record<string, ParsedAccount<WhitelistedCreator>>,
   setter: UpdateStateValueFunc,
 ) => {
-  console.log('Filter initMetadata', metadata);
   if (isMetadataPartOfStore(metadata, whitelistedCreators)) {
     await metadata.info.init();
     setter('metadataByMint', metadata.info.mint, metadata);

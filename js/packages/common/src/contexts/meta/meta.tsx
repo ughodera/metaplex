@@ -282,13 +282,10 @@ export function MetaProvider({ children = null as any }) {
       }
     } else {
       console.log('------->No pagination detected');
-      console.log('nextstate before', nextState);
 
       nextState = !USE_SPEED_RUN
         ? await loadAccounts(connection)
         : await limitedLoadAccounts(connection);
-
-      console.log('nextstate after', nextState);
 
       console.log('------->Query finished');
 

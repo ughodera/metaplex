@@ -16,6 +16,7 @@ import {
   Store,
   WhitelistedCreator,
 } from '@oyster/common/dist/lib/models/metaplex/index';
+
 import {
   MasterEditionV1,
   notify,
@@ -35,7 +36,7 @@ import {
   convertMasterEditions,
   filterMetadata,
 } from '../../actions/convertMasterEditions';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { SetupVariables } from '../../components/SetupVariables';
 import { cacheAllAuctions } from '../../actions/cacheAllAuctions';
 
@@ -62,6 +63,24 @@ export const AdminView = () => {
     }
   }, [store, storeAddress, wallet.publicKey]);
   console.log('@admin', wallet.connected, storeAddress, isLoading, store);
+
+  const hideAdminPage = wallet.publicKey?.toBase58() != process.env.NEXT_PUBLIC_STORE_OWNER_ADDRESS;
+
+  useEffect(() => {
+    if(hideAdminPage) {
+      notify({
+        message: 'Store owner can access this page',
+        type: 'error',
+      });
+    }
+  }, [hideAdminPage]);
+
+  console.log('NEXT_PUBLIC_STORE_OWNER_ADDRESS', wallet.publicKey?.toBase58());
+  console.log('NEXT_PUBLIC_STORE_OWNER_ADDRESS', process.env.NEXT_PUBLIC_STORE_OWNER_ADDRESS);
+  
+  if (hideAdminPage) {
+    return <Redirect to="/" />
+  }
 
   return (
     <>
