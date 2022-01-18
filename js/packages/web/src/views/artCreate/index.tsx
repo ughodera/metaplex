@@ -96,26 +96,6 @@ export const ArtCreateView = () => {
   );
 
   useEffect(() => {
-    async function customSaveAdmin() {
-      if(wallet.publicKey) {
-        console.log("SaveAdmin before try catch")
-        try {
-          await saveAdmin(connection, wallet, true, [
-            new WhitelistedCreator({
-              address: wallet.publicKey.toBase58(),
-              activated: true,
-            }),
-          ]); 
-          console.log("SaveAdmin success")
-        } catch (error) {
-          console.log("SaveAdmin error", error)
-        }
-      }
-    }
-    customSaveAdmin();
-  }, []),
-
-  useEffect(() => {
     if (step_param) setStep(parseInt(step_param));
     else gotoStep(0);
   }, [step_param, gotoStep]);
@@ -1286,6 +1266,12 @@ const WaitingStep = (props: {
             title="Signing Token Transaction"
             description="Approve the final transaction from your wallet"
             icon={setIconForStep(props.step, 8)}
+          />
+          <Step
+            className={'white-description'}
+            title="Whitelisting Creator"
+            description="Whitelisting creator if not added"
+            icon={setIconForStep(props.step, 9)}
           />
         </Steps>
       </Card>
