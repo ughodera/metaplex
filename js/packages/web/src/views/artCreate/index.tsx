@@ -27,7 +27,6 @@ import {
   MetadataCategory,
   useConnectionConfig,
   Creator,
-  WhitelistedCreator,
   shortenAddress,
   MetaplexModal,
   MetaplexOverlay,
@@ -98,22 +97,6 @@ export const ArtCreateView = () => {
     [history],
   );
 
-  const customeSaveAdminFn = useCallback(
-    async () => {
-      if(wallet.publicKey) {
-        try {
-          await saveAdmin(connection, wallet, true, [
-            new WhitelistedCreator({
-              address: wallet.publicKey.toBase58(),
-              activated: true,
-            }),
-          ]); 
-        } catch (error) {
-          console.log("SaveAdmin error", error)
-        }
-      }
-  }, [connection, wallet]);
-
   useEffect(() => {
     if (step_param) setStep(parseInt(step_param));
     else gotoStep(0);
@@ -135,6 +118,7 @@ export const ArtCreateView = () => {
         files: attributes.properties.files,
         category: attributes.properties?.category,
       },
+      isWalletWhiteListed
     };
     setStepsVisible(false);
     setMinting(true);
@@ -238,12 +222,7 @@ export const ArtCreateView = () => {
               minting={isMinting}
               step={nftCreateProgress}
               isWalletWhiteListed={isWalletWhiteListed}
-              confirm={async() => {
-                if (!isWalletWhiteListed) {
-                  await customeSaveAdminFn();
-                }
-                gotoStep(6);
-              }}
+              confirm={() => gotoStep(6)}
             />
           )}
           {0 < step && step < 5 && (
