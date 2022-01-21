@@ -48,6 +48,8 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useTokenList } from '../../contexts/tokenList';
+import { useMeta } from '../../contexts';
+
 
 const { Step } = Steps;
 const { Dragger } = Upload;
@@ -62,7 +64,7 @@ export const ArtCreateView = () => {
   const history = useHistory();
   const { width } = useWindowDimensions();
   const [nftCreateProgress, setNFTcreateProgress] = useState<number>(0);
-
+  const {whitelistedCreatorsByCreator } = useMeta();
   const [step, setStep] = useState<number>(0);
   const [stepsVisible, setStepsVisible] = useState<boolean>(true);
   const [isMinting, setMinting] = useState<boolean>(false);
@@ -84,6 +86,7 @@ export const ArtCreateView = () => {
       category: MetadataCategory.Image,
     },
   });
+  const isWalletWhiteListed = Object.keys(whitelistedCreatorsByCreator).includes(wallet.publicKey?.toBase58() || '');
 
   const gotoStep = useCallback(
     (_step: number) => {
@@ -114,6 +117,7 @@ export const ArtCreateView = () => {
         files: attributes.properties.files,
         category: attributes.properties?.category,
       },
+      isWalletWhiteListed
     };
     setStepsVisible(false);
     setMinting(true);
@@ -159,6 +163,7 @@ export const ArtCreateView = () => {
               <Step title="Info" />
               <Step title="Royalties" />
               <Step title="Launch" />
+              {!isWalletWhiteListed && (<Step title="White Listing" />)}
             </Steps>
           </Col>
         )}
@@ -215,6 +220,7 @@ export const ArtCreateView = () => {
               mint={mint}
               minting={isMinting}
               step={nftCreateProgress}
+              isWalletWhiteListed={isWalletWhiteListed}
               confirm={() => gotoStep(6)}
             />
           )}
@@ -717,7 +723,9 @@ const InfoStep = (props: {
           <label className="action-field">
             <span className="field-title">Maximum Supply</span>
             <InputNumber
-              placeholder="Quantity"
+              placeholder="Min quantity 1"
+              min={1}
+              required
               onChange={(val: number) => {
                 props.setAttributes({
                   ...props.attributes,
@@ -785,6 +793,7 @@ const InfoStep = (props: {
         <Button
           type="primary"
           size="large"
+          disabled={!props.attributes.properties.maxSupply}
           onClick={() => {
             form.validateFields().then(values => {
               const nftAttributes = values.attributes;
@@ -1186,6 +1195,7 @@ const LaunchStep = (props: {
 const WaitingStep = (props: {
   mint: Function;
   minting: boolean;
+  isWalletWhiteListed: boolean;
   confirm: Function;
   step: number;
 }) => {
@@ -1265,6 +1275,12 @@ const WaitingStep = (props: {
             description="Approve the final transaction from your wallet"
             icon={setIconForStep(props.step, 8)}
           />
+          {!props.isWalletWhiteListed &&(<Step
+            className={'white-description'}
+            title="Whitelisting Creator"
+            description="Whitelisting creator if not added"
+            icon={setIconForStep(props.step, 9)}
+          />)}
         </Steps>
       </Card>
     </div>

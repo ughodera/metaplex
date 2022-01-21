@@ -737,7 +737,7 @@ const CategoryStep = (props: {
               </div>
             </Button>
           </Row>
-          <Row>
+          {/* <Row>
             <Button
               className="type-btn"
               size="large"
@@ -750,8 +750,8 @@ const CategoryStep = (props: {
                 </div>
               </div>
             </Button>
-          </Row>
-          <Row>
+          </Row> */}
+          {/* <Row>
             <Button
               className="type-btn"
               size="large"
@@ -764,8 +764,8 @@ const CategoryStep = (props: {
                 </div>
               </div>
             </Button>
-          </Row>
-          <Row>
+          </Row> */}
+          {/* <Row>
             <Button
               className="type-btn"
               size="large"
@@ -779,8 +779,8 @@ const CategoryStep = (props: {
                 </div>
               </div>
             </Button>
-          </Row>
-          <Row>
+          </Row> */}
+          {/* <Row>
             <Button
               className="type-btn"
               size="large"
@@ -794,7 +794,7 @@ const CategoryStep = (props: {
                 </div>
               </div>
             </Button>
-          </Row>
+          </Row> */}
         </Col>
       </Row>
     </>
@@ -835,15 +835,19 @@ const InstantSaleStep = ({
       return !!maxSupply && maxSupply.toNumber() > 0;
     },[attributes?.items?.[0]]
   );
-  const artistFilter = useCallback(
-    (i: SafetyDepositDraft) =>
-      !(i.metadata.info.data.creators || []).some((c: Creator) => !c.verified),
-    [],
-  );
+
+  let artistFilter = (i: SafetyDepositDraft) =>
+    !(i.metadata.info.data.creators || []).find((c: Creator) => !c.verified);
+
+  let filter = (i: SafetyDepositDraft) =>
+    // !!i.masterEdition && !!i.masterEdition.info.maxSupply;
+    !!!i.masterEdition;
 
   const isLimitedEdition =
     attributes.instantSaleType === InstantSaleType.Limited;
   const shouldRenderSelect = attributes.items.length > 0;
+
+  let overallFilter = (i: SafetyDepositDraft) => filter(i) && artistFilter(i);
 
   return (
     <>
@@ -854,7 +858,7 @@ const InstantSaleStep = ({
       <Row className="content-action">
         <Col xl={24}>
           <ArtSelector
-            filter={artistFilter}
+            filter={overallFilter}
             selected={attributes.items}
             setSelected={items => {
               setAttributes({ ...attributes, items });

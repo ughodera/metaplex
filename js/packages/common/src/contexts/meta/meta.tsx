@@ -82,7 +82,7 @@ export function MetaProvider({ children = null as any }) {
       setIsLoading(true);
     }
     setIsLoading(true);
-
+    
     const nextState = await pullStoreMetadata(connection, state);
 
     setIsLoading(false);
@@ -234,7 +234,6 @@ export function MetaProvider({ children = null as any }) {
     if (nextState.storeIndexer.length) {
       if (USE_SPEED_RUN) {
         nextState = await limitedLoadAccounts(connection);
-
         console.log('------->Query finished');
 
         setState(nextState);
@@ -283,6 +282,7 @@ export function MetaProvider({ children = null as any }) {
       }
     } else {
       console.log('------->No pagination detected');
+
       nextState = !USE_SPEED_RUN
         ? await loadAccounts(connection)
         : await limitedLoadAccounts(connection);

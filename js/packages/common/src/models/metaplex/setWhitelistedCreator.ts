@@ -18,7 +18,6 @@ export async function setWhitelistedCreator(
   }
 
   const whitelistedCreatorPDAKey = await getWhitelistedCreator(creator);
-
   const value = new SetWhitelistedCreatorArgs({ activated });
   const data = Buffer.from(serialize(SCHEMA, value));
 
@@ -59,6 +58,8 @@ export async function setWhitelistedCreator(
       isWritable: false,
     },
   ];
+
+  console.log('Keyis ', keys, data);
 
   instructions.push(
     new TransactionInstruction({

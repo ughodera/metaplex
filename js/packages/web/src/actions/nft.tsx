@@ -16,7 +16,8 @@ import {
   WalletSigner,
   Attribute,
   getAssetCostToStore,
-  ARWEAVE_UPLOAD_ENDPOINT
+  ARWEAVE_UPLOAD_ENDPOINT,
+  WhitelistedCreator
 } from '@oyster/common';
 import React, { Dispatch, SetStateAction } from 'react';
 import { MintLayout, Token } from '@solana/spl-token';
@@ -27,6 +28,8 @@ import {
   TransactionInstruction,
 } from '@solana/web3.js';
 import crypto from 'crypto';
+import {saveAdmin} from './saveAdmin';
+
 
 import { AR_SOL_HOLDER_ID } from '../utils/ids';
 import BN from 'bn.js';
@@ -90,6 +93,7 @@ export const mintNFT = async (
   },
   progressCallback: Dispatch<SetStateAction<number>>,
   maxSupply?: number,
+  isWalletWhiteListed?: boolean
 ): Promise<{
   metadataAccount: StringPublicKey;
 } | void> => {
@@ -319,8 +323,20 @@ export const mintNFT = async (
       updateSigners,
     );
 
+    let message = 'Art created on Solana'
+    if(!isWalletWhiteListed) {
+      progressCallback(9);
+      await saveAdmin(connection, wallet, true, [
+        new WhitelistedCreator({
+          address: wallet.publicKey.toBase58(),
+          activated: true,
+        }),
+      ]);
+      message += 'and you are added as whitelist creator'
+    }
+
     notify({
-      message: 'Art created on Solana',
+      message,
       description: (
         <a href={arweaveLink} target="_blank" rel="noopener noreferrer">
           Arweave Link

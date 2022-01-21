@@ -292,6 +292,7 @@ export const sendTransactionsInChunks = async (
   if (!wallet.publicKey) throw new WalletNotConnectedError();
   let instructionsChunk: TransactionInstruction[][][] = [instructionSet];
   let signersChunk: Keypair[][][] = [signersSet];
+  console.log('signersChunk', signersChunk)
 
   instructionsChunk = chunks(instructionSet, batchSize);
   signersChunk = chunks(signersSet, batchSize);
@@ -305,16 +306,21 @@ export const sendTransactionsInChunks = async (
       if (instructions.length === 0) {
         continue;
       }
-      const transaction = new Transaction();
+      const transaction = new Transaction({
+        feePayer: wallet.publicKey
+      });
       const block = await connection.getRecentBlockhash(commitment);
 
       instructions.forEach(instruction => transaction.add(instruction));
       transaction.recentBlockhash = block.blockhash;
-      transaction.setSigners(
-        // fee payed by the wallet owner
-        wallet.publicKey,
-        ...signers.map(s => s.publicKey),
-      );
+      // transaction.setSigners(
+      //   // fee payed by the wallet owner
+      //   wallet.publicKey,
+      //   ...signers.map(s => {
+      //     console.log("S publickey ",s.publicKey.toBase58())
+      //     return s.publicKey;
+      //   }),
+      // );
       if (signers.length > 0) {
         transaction.partialSign(...signers);
       }
@@ -359,7 +365,7 @@ export const sendTransactionsInChunks = async (
   return instructionSet.length;
 };
 
-export const sendTransactions = async (
+  export const sendTransactions = async (
   connection: Connection,
   wallet: WalletSigner,
   instructionSet: TransactionInstruction[][],
@@ -386,14 +392,18 @@ export const sendTransactions = async (
       continue;
     }
 
-    let transaction = new Transaction();
+    let transaction = new Transaction({
+      feePayer: wallet.publicKey
+    });
     instructions.forEach(instruction => transaction.add(instruction));
     transaction.recentBlockhash = block.blockhash;
-    transaction.setSigners(
-      // fee payed by the wallet owner
-      wallet.publicKey,
-      ...signers.map(s => s.publicKey),
-    );
+    // transaction.setSigners(
+    //   // fee payed by the wallet owner
+    //   wallet.publicKey,
+    //   ...signers.map(s => s.publicKey),
+    // );
+
+    console.log("Customised signer transactions", signers);
 
     if (signers.length > 0) {
       transaction.partialSign(...signers);
@@ -402,7 +412,9 @@ export const sendTransactions = async (
     unsignedTxns.push(transaction);
   }
 
+  console.log("Before Wallet", unsignedTxns);
   const signedTxns = await wallet.signAllTransactions(unsignedTxns);
+  console.log("After Wallet", signedTxns);
 
   const pendingTxns: Promise<{ txid: string; slot: number }>[] = [];
 
@@ -671,6 +683,7 @@ export async function sendSignedTransaction({
   successMessage?: string;
   timeout?: number;
 }): Promise<{ txid: string; slot: number }> {
+  console.log('rawTransaction', signedTransaction)
   const rawTransaction = signedTransaction.serialize();
   const startTime = getUnixTs();
   let slot = 0;
