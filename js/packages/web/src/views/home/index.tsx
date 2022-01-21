@@ -6,7 +6,7 @@ import { SalesListView } from './components/SalesList';
 import { SetupView } from './setup';
 
 export const HomeView = () => {
-  const { isLoading, store } = useMeta();
+  // const { isLoading, store } = useMeta();
   // const { isConfigured } = useStore();
 
   // const showAuctions = (store && isConfigured) || isLoading;

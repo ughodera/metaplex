@@ -19,7 +19,6 @@ import { ArtCard } from './../../components/ArtCard';
 import { UserSearch, UserValue } from './../../components/UserSearch';
 import { Confetti } from './../../components/Confetti';
 import { mintNFT } from '../../actions';
-import {saveAdmin} from '../../actions/saveAdmin';
 import {
   MAX_METADATA_LEN,
   useConnection,
@@ -724,7 +723,9 @@ const InfoStep = (props: {
           <label className="action-field">
             <span className="field-title">Maximum Supply</span>
             <InputNumber
-              placeholder="Quantity"
+              placeholder="Min quantity 1"
+              min={1}
+              required
               onChange={(val: number) => {
                 props.setAttributes({
                   ...props.attributes,
@@ -792,6 +793,7 @@ const InfoStep = (props: {
         <Button
           type="primary"
           size="large"
+          disabled={!props.attributes.properties.maxSupply}
           onClick={() => {
             form.validateFields().then(values => {
               const nftAttributes = values.attributes;
