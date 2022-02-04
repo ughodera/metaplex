@@ -121,11 +121,7 @@ export const ArtMinting = ({ id, onMint }: ArtMintingProps) => {
     setShowCongrats(true);
   };
 
-  const burn = () => {
-    history.replace("/");
-  };
-
-  const burn1 = async () => {
+  const burn = async () => {
     try {
       setIsLoading(true);
       await burnNftFn(
