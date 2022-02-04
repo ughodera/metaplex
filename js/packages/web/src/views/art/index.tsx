@@ -10,14 +10,15 @@ import {
   List,
   Card,
 } from 'antd';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { useArt, useExtendedArt } from '../../hooks';
 
 import { ArtContent } from '../../components/ArtContent';
-import { shortenAddress, useConnection } from '@oyster/common';
+import { shortenAddress, useConnection, useUserAccounts, notify } from '@oyster/common';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { MetaAvatar } from '../../components/MetaAvatar';
 import { sendSignMetadata } from '../../actions/sendSignMetadata';
+import {burnNftFn} from '../../actions/burnNft';
 import { ViewOn } from '../../components/ViewOn';
 import { ArtType } from '../../types';
 import { ArtMinting } from '../../components/ArtMinting';
@@ -46,8 +47,28 @@ export const ArtView = () => {
     badge = `${art.edition} of ${art.supply}`;
   }
   const { ref, data } = useExtendedArt(id);
+  const { accountByMint } = useUserAccounts();
+  const artMintTokenAccount = accountByMint.get(art.mint!);
+  const history = useHistory();
 
-  // const { userAccounts } = useUserAccounts();
+  const burn = async () => {
+    try {
+      await burnNftFn(
+        art,
+        wallet!,
+        connection,
+        artMintTokenAccount!,
+      );
+      notify({
+        message: 'NFT is removed from your wallet',
+        type: 'info',
+      });
+      history.replace("/");
+    } catch (e) {
+      console.log('Error while burning nft', e);
+    }
+  };
+
 
   // const accountByMint = userAccounts.reduce((prev, acc) => {
   //   prev.set(acc.info.mint.toBase58(), acc);
@@ -186,6 +207,15 @@ export const ArtView = () => {
                 </Col>
               </Row>
             )}
+          <Button
+            type="primary"
+            size="large"
+            className="action-btn"
+            style={{ marginTop: 20 }}
+            onClick={burn}
+          >
+            Burn NFT
+          </Button>
             {/* <Button
                   onClick={async () => {
                     if(!art.mint) {

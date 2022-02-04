@@ -11,11 +11,9 @@ import {
   MetaplexOverlay,
   useConnection,
   useUserAccounts,
-  notify,
 } from '@oyster/common';
 import { useArt } from '../../hooks';
 import { mintEditionsToWallet } from '../../actions/mintEditionsIntoWallet';
-import {burnNftFn} from '../../actions/burnNft';
 import { ArtType } from '../../types';
 import { Confetti } from '../Confetti';
 import { Link, useHistory } from 'react-router-dom';
@@ -28,7 +26,6 @@ interface ArtMintingProps {
 
 export const ArtMinting = ({ id, onMint }: ArtMintingProps) => {
   const wallet = useWallet();
-  const history = useHistory();
   const connection = useConnection();
   const { accountByMint } = useUserAccounts();
   const [showMintModal, setShowMintModal] = useState<boolean>(false);
@@ -121,26 +118,6 @@ export const ArtMinting = ({ id, onMint }: ArtMintingProps) => {
     setShowCongrats(true);
   };
 
-  const burn = async () => {
-    try {
-      setIsLoading(true);
-      await burnNftFn(
-        art,
-        wallet!,
-        connection,
-        artMintTokenAccount!,
-      );
-      notify({
-        message: 'NFT is removed from your wallet',
-        type: 'info',
-      });
-      history.replace("/");
-    } catch (e) {
-      console.log('Error while burning nft', e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const mint = async () => {
     try {
@@ -174,16 +151,6 @@ export const ArtMinting = ({ id, onMint }: ArtMintingProps) => {
             onClick={() => setShowMintModal(true)}
           >
             Mint
-          </Button>
-
-          <Button
-            type="primary"
-            size="large"
-            className="action-btn"
-            style={{ marginTop: 20 }}
-            onClick={burn}
-          >
-            Burning NFT
           </Button>
 
           <Modal
