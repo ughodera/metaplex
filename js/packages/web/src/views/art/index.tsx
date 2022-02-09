@@ -50,6 +50,9 @@ export const ArtView = () => {
   const { accountByMint } = useUserAccounts();
   const artMintTokenAccount = accountByMint.get(art.mint!);
   const history = useHistory();
+  const creators:Array<string | undefined> = [];
+  art.creators?.forEach(item => creators.push(item.address))
+  let showBurnNftBtn = creators.includes(wallet.publicKey?.toBase58());
 
   const burn = async () => {
     try {
@@ -207,7 +210,7 @@ export const ArtView = () => {
                 </Col>
               </Row>
             )}
-          <Button
+          {showBurnNftBtn && (<Button
             type="primary"
             size="large"
             className="action-btn"
@@ -215,7 +218,7 @@ export const ArtView = () => {
             onClick={burn}
           >
             Burn NFT
-          </Button>
+          </Button>)}
             {/* <Button
                   onClick={async () => {
                     if(!art.mint) {
